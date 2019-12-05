@@ -1,34 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ian.leocadio\\source\\repos\\Matriz\\Matriz\\Matriz.csproj": {}
+    "C:\\git\\MatrixMagicSquare\\Matriz\\Matriz.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ian.leocadio\\source\\repos\\Matriz\\Matriz\\Matriz.csproj": {
+    "C:\\git\\MatrixMagicSquare\\Matriz\\Matriz.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ian.leocadio\\source\\repos\\Matriz\\Matriz\\Matriz.csproj",
+        "projectUniqueName": "C:\\git\\MatrixMagicSquare\\Matriz\\Matriz.csproj",
         "projectName": "Matriz",
-        "projectPath": "C:\\Users\\ian.leocadio\\source\\repos\\Matriz\\Matriz\\Matriz.csproj",
+        "projectPath": "C:\\git\\MatrixMagicSquare\\Matriz\\Matriz.csproj",
         "packagesPath": "C:\\Users\\ian.leocadio\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ian.leocadio\\source\\repos\\Matriz\\Matriz\\obj\\",
+        "outputPath": "C:\\git\\MatrixMagicSquare\\Matriz\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
           "C:\\Users\\ian.leocadio\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "http://nuget.grapecity.com/nuget": {},
-          "https://www.nuget.org/api/v2/": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.0": {

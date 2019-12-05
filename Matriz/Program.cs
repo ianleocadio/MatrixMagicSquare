@@ -30,8 +30,9 @@ namespace Matriz
                 new int[] { 6,1,6 }
             };
 
-            Teste2(s);
+            Teste2(s3);
 
+             
             //Console.WriteLine($"Eficiência: {Teste(s3)}");
         }
 
@@ -68,6 +69,8 @@ namespace Matriz
 
             Console.WriteLine();
 
+            
+
             for (int i = 0; i < s.Length; i++)
             {
                 for (int j = 0; j < s.Length; j++)
@@ -79,18 +82,18 @@ namespace Matriz
         }
 
 
-        static Dictionary<int, Tuple<int, int>> validNumbers;
+        static List<KeyValuePair<int, Tuple<int, int>>> validNumbers;
 
         public static void InitValidNumbers(int[][] s)
         {
-
-            validNumbers = new Dictionary<int, Tuple<int, int>>();
+            
+            validNumbers = new List<KeyValuePair<int, Tuple<int, int>>>();
 
             for (int i = 0; i < s.Length; i++)
             {
                 for (int j = 0; j < s.Length; j++)
                 {
-                    validNumbers.TryAdd(s[i][j], Tuple.Create(i, j));
+                    validNumbers.Add(KeyValuePair.Create(s[i][j], Tuple.Create(i, j)));
                 }
             }
         }
@@ -122,31 +125,37 @@ namespace Matriz
             var newValue = 15 - value + s[entry.Value.Item1][entry.Value.Item2]; // 8
 
             // Contém
-            if (!validNumbers.TryGetValue(newValue, out Tuple<int, int> keys))
-                return false;
-
-            // valor liberado para uso
-
-            if (!Teste2Recursivo(s, new KeyValuePair<int, Tuple<int, int>>(newValue, Tuple.Create(keys.Item1, keys.Item2))))
+            var secondEntry = validNumbers.FirstOrDefault(i => i.Key == newValue);
+            if (secondEntry.Equals(default(KeyValuePair<int, Tuple<int, int>>)))
             {
-                // 8 -> 1,2 V(14) H(14)
-                Sum(s, keys.Item1, keys.Item2, out int otherV, out int otherH);
-                var otherValue = (otherV > otherH) ? otherV : otherH;
-                var otherNewValue = 15 - otherValue + s[keys.Item1][keys.Item2];
-
-                if (15 - otherValue < 15 - value)
+                s[entry.Value.Item1][entry.Value.Item2] = newValue;
+                validNumbers.Remove(KeyValuePair.Create(entry.Key, Tuple.Create(entry.Value.Item1, entry.Value.Item2)));
+                validNumbers.Add(KeyValuePair.Create(newValue, Tuple.Create(entry.Value.Item1, entry.Value.Item2)));
+                return true;
+            }
+            else
+            {
+                if (Teste2Recursivo(s, KeyValuePair.Create(newValue, Tuple.Create(secondEntry.Value.Item1, secondEntry.Value.Item2))))
                 {
-                    s[entry.Value.Item1][entry.Value.Item2] = newValue;
-                    s[keys.Item1][keys.Item2] = otherNewValue;
-                    validNumbers.Remove(newValue);
-                    validNumbers.TryAdd(otherNewValue, Tuple.Create(keys.Item1, keys.Item2));
-                    return true;
+                    // 8 -> 1,2 V(14) H(14)
+                    Sum(s, secondEntry.Value.Item1, secondEntry.Value.Item2, out int otherV, out int otherH);
+                    var otherValue = (otherV > otherH) ? otherV : otherH;
+                    var otherNewValue = 15 - otherValue + s[secondEntry.Value.Item1][secondEntry.Value.Item2];
+
+                    if (15 - otherValue < 15 - value)
+                    {
+                        s[entry.Value.Item1][entry.Value.Item2] = newValue;
+                        s[secondEntry.Value.Item1][secondEntry.Value.Item2] = otherNewValue;
+                        validNumbers.Remove(KeyValuePair.Create(entry.Key, Tuple.Create(entry.Value.Item1, entry.Value.Item2)));
+                        validNumbers.Add(KeyValuePair.Create(newValue, Tuple.Create(entry.Value.Item1, entry.Value.Item2)));
+                        return false;
+                    }
+                    else
+                        return true;
                 }
-                else
-                    return false;
             }
 
-            return true;
+            return false;
 
         }
 
