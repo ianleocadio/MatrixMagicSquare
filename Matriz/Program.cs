@@ -36,9 +36,9 @@ namespace Matriz
             //Console.WriteLine($"Eficiência: {Teste(s3)}");
         }
 
-        public static void Sum(int[][] s, int i, int j, out int Vertical, out int Horizontal)
+        public static void Sum(int[][] s, int i, int j, out int Vertical, out int Horizontal, out int Diagonal)
         {
-            int tempV = 0, tempH = 0;
+            int tempV = 0, tempH = 0, tempD = 0;
 
             Parallel.Invoke(
                 () =>
@@ -57,10 +57,29 @@ namespace Matriz
                     {
                         tempV += s[v][j];
                     }
-                });
+                },
+                () =>
+                {
+                    if ((i == j))
+                    {
+                        for (int d = 0; d < s.Length; d++)
+                        {
+                            tempD += s[d][d];
+                        }
+                    }
+                    else if (i + j == s.Length - 1)
+                    {
+                        for (int d = 0; d < s.Length; d++)
+                        {
+                            tempD += s[d][s.Length - 1 - d];
+                        }
+                    }
+                }
+                );
 
             Horizontal = tempH;
             Vertical = tempV;
+            Diagonal = tempD;
         }
 
 
@@ -82,81 +101,94 @@ namespace Matriz
         }
 
 
-        static List<KeyValuePair<int, Tuple<int, int>>> validNumbers;
-
-        public static void InitValidNumbers(int[][] s)
-        {
-            
-            validNumbers = new List<KeyValuePair<int, Tuple<int, int>>>();
-
-            for (int i = 0; i < s.Length; i++)
-            {
-                for (int j = 0; j < s.Length; j++)
-                {
-                    validNumbers.Add(KeyValuePair.Create(s[i][j], Tuple.Create(i, j)));
-                }
-            }
-        }
 
         public static void Teste2(int[][] s)
         {
-            if (validNumbers == null)
-                InitValidNumbers(s);
-
-
             PrintMatriz(s);
-
-            foreach (var entry in validNumbers.ToList())
+            var n = s.Length;
+            for (int i = 0; i < n; i++)
             {
-                Teste2Recursivo(s, entry);
-            }
-
-            PrintMatriz(s);
-        }
-
-
-        public static bool Teste2Recursivo(int[][] s, KeyValuePair<int, Tuple<int, int>> entry)
-        {
-            // 5 -> 0, 0 V(12) H(12)
-            Sum(s, entry.Value.Item1, entry.Value.Item2, out int V, out int H);
-            var value = (V > H) ? V : H; //12
-            if (value == 15)
-                return true;
-            var newValue = 15 - value + s[entry.Value.Item1][entry.Value.Item2]; // 8
-
-            // Contém
-            var secondEntry = validNumbers.FirstOrDefault(i => i.Key == newValue);
-            if (secondEntry.Equals(default(KeyValuePair<int, Tuple<int, int>>)))
-            {
-                s[entry.Value.Item1][entry.Value.Item2] = newValue;
-                validNumbers.Remove(KeyValuePair.Create(entry.Key, Tuple.Create(entry.Value.Item1, entry.Value.Item2)));
-                validNumbers.Add(KeyValuePair.Create(newValue, Tuple.Create(entry.Value.Item1, entry.Value.Item2)));
-                return true;
-            }
-            else
-            {
-                if (Teste2Recursivo(s, KeyValuePair.Create(newValue, Tuple.Create(secondEntry.Value.Item1, secondEntry.Value.Item2))))
+                for (int j = 0; j < n; j++)
                 {
-                    // 8 -> 1,2 V(14) H(14)
-                    Sum(s, secondEntry.Value.Item1, secondEntry.Value.Item2, out int otherV, out int otherH);
-                    var otherValue = (otherV > otherH) ? otherV : otherH;
-                    var otherNewValue = 15 - otherValue + s[secondEntry.Value.Item1][secondEntry.Value.Item2];
+                    if (i == j && j == n - 2) continue;
 
-                    if (15 - otherValue < 15 - value)
+                    int valor, valorOposto;
+                    if (i == j)
                     {
-                        s[entry.Value.Item1][entry.Value.Item2] = newValue;
-                        s[secondEntry.Value.Item1][secondEntry.Value.Item2] = otherNewValue;
-                        validNumbers.Remove(KeyValuePair.Create(entry.Key, Tuple.Create(entry.Value.Item1, entry.Value.Item2)));
-                        validNumbers.Add(KeyValuePair.Create(newValue, Tuple.Create(entry.Value.Item1, entry.Value.Item2)));
-                        return false;
+                        valor = s[i][i];
+                        valorOposto = s[i + n - 1][i + n - 1];
+
+                        if (valor + valorOposto == 10)
+                            continue;
+
+                        if (valor > valorOposto)
+                            s[i][i] = 10 - valorOposto;
+                        else
+                            s[i + n - 1][i + n - 1] = 10 - valor;
+
+                    }
+                    else if (i + j == s.Length - 1)
+                    {
+                        valor = s[i][j];
+                        valorOposto = s[i + n - 1][i];
+
+                        if (valor + valorOposto == 10)
+                            continue;
+
+                        if (valor > valorOposto)
+                            s[i][j] = 10 - valorOposto;
+                        else
+                            s[i + n - 1][i] = 10 - valor;
                     }
                     else
-                        return true;
+                    {
+                        valor = s[i][j];
+                        int iO, jO;
+                        if (i > j)
+                        {
+                            valor = s[i][j];
+                            if (j > 0)
+                            {
+                                iO = i - n + 1;
+                                jO = j;
+                                valorOposto = s[i - n + 1][j];
+                            }
+                            else
+                            {
+                                iO = i;
+                                jO = j + n - 1;
+                                valorOposto = s[i][j + n - 1];
+                            }
+
+                        }
+                        else
+                        {
+                            if (i > 0)
+                            {
+                                iO = i;
+                                jO = j - n + 1;
+                                valorOposto = s[i][j - n + 1];
+                            }
+                            else
+                            {
+                                iO = i + n - 1;
+                                jO = j;
+                                valorOposto = s[i + n - 1][j];
+                            }
+                        }
+                        if (valor + valorOposto == 10)
+                            continue;
+
+                        if (valor > valorOposto)
+                            s[i][j] = 10 - valorOposto;
+                        else
+                            s[iO][jO] = 10 - valor;
+                    }
+
+                    
                 }
             }
-
-            return false;
-
+            PrintMatriz(s);
         }
 
 
